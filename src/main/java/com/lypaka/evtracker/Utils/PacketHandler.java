@@ -1,16 +1,12 @@
 package com.lypaka.evtracker.Utils;
 
-import com.cobblemon.mod.common.api.pokemon.stats.Stats;
-import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.lypaka.evtracker.Commands.SlotCommand;
 import com.lypaka.evtracker.ConfigGetters;
-import com.lypaka.lypakautils.Handlers.FancyTextHandler;
-import com.lypaka.lypakautils.LypakaUtils;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
-import net.minecraft.network.packet.s2c.play.SubtitleS2CPacket;
-import net.minecraft.network.packet.s2c.play.TitleS2CPacket;
-import net.minecraft.server.network.ServerPlayerEntity;
+import com.lypaka.lypakautils.FancyText;
+import com.lypaka.lypakautils.Listeners.JoinListener;
+import com.pixelmonmod.pixelmon.api.pokemon.Pokemon;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.network.play.server.STitlePacket;
 
 import java.util.Map;
 import java.util.Timer;
@@ -29,7 +25,7 @@ public class PacketHandler {
 
                 for (Map.Entry<UUID, Pokemon> entry : SlotCommand.toggledPlayers.entrySet()) {
 
-                    sendPacket(LypakaUtils.playerMap.get(entry.getKey()), entry.getValue());
+                    sendPacket(JoinListener.playerMap.get(entry.getKey()), entry.getValue());
 
                 }
 
@@ -41,12 +37,12 @@ public class PacketHandler {
 
     public static void sendPacket (ServerPlayerEntity player, Pokemon pokemon) {
 
-        int hp = pokemon.getEvs().get(Stats.HP);
-        int atk = pokemon.getEvs().get(Stats.ATTACK);
-        int def = pokemon.getEvs().get(Stats.DEFENCE);
-        int satk = pokemon.getEvs().get(Stats.SPECIAL_ATTACK);
-        int sdef = pokemon.getEvs().get(Stats.SPECIAL_DEFENCE);
-        int spd = pokemon.getEvs().get(Stats.SPEED);
+        int hp = pokemon.getEVs().getArray()[0];
+        int atk = pokemon.getEVs().getArray()[1];
+        int def = pokemon.getEVs().getArray()[2];
+        int satk = pokemon.getEVs().getArray()[3];
+        int sdef = pokemon.getEVs().getArray()[4];
+        int spd = pokemon.getEVs().getArray()[5];
 
         String message = ConfigGetters.message
                 .replace("%hp%", String.valueOf(hp))
@@ -55,8 +51,12 @@ public class PacketHandler {
                 .replace("%spatk%", String.valueOf(satk))
                 .replace("%spdef%", String.valueOf(sdef))
                 .replace("%spd%", String.valueOf(spd));
-        player.networkHandler.sendPacket(new GameMessageS2CPacket(FancyTextHandler.getFormattedText(message), true));
+
+        STitlePacket title = new STitlePacket(STitlePacket.Type.ACTIONBAR, FancyText.getFormattedText(message), 2, 2, 2);
+        player.connection.send(title);
 
     }
+
+
 
 }

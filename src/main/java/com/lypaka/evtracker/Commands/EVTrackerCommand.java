@@ -1,23 +1,24 @@
 package com.lypaka.evtracker.Commands;
 
-import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import com.lypaka.evtracker.EVTracker;
+import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 
 import java.util.Arrays;
 import java.util.List;
 
+@Mod.EventBusSubscriber(modid = EVTracker.MOD_ID)
 public class EVTrackerCommand {
 
     public static final List<String> ALIASES = Arrays.asList("evtracker", "etrack", "etracker");
 
-    public static void register() {
+    @SubscribeEvent
+    public static void onCommandRegistration (RegisterCommandsEvent event) {
 
-        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
-
-            new ReloadCommand(dispatcher);
-            new SlotCommand(dispatcher);
-            new ToggleCommand(dispatcher);
-
-        });
+        new ReloadCommand(event.getDispatcher());
+        new SlotCommand(event.getDispatcher());
+        new ToggleCommand(event.getDispatcher());
 
     }
 

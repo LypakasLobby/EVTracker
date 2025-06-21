@@ -2,23 +2,23 @@ package com.lypaka.evtracker.Commands;
 
 import com.lypaka.evtracker.ConfigGetters;
 import com.lypaka.evtracker.EVTracker;
-import com.lypaka.lypakautils.Handlers.FancyTextHandler;
-import com.lypaka.lypakautils.Handlers.PermissionHandler;
+import com.lypaka.lypakautils.FancyText;
+import com.lypaka.lypakautils.MiscHandlers.PermissionHandler;
 import com.mojang.brigadier.CommandDispatcher;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.command.CommandSource;
+import net.minecraft.command.Commands;
+import net.minecraft.entity.player.ServerPlayerEntity;
 
 public class ReloadCommand {
 
-    public ReloadCommand (CommandDispatcher<ServerCommandSource> dispatcher) {
+    public ReloadCommand (CommandDispatcher<CommandSource> dispatcher) {
 
         for (String a : EVTrackerCommand.ALIASES) {
 
             dispatcher.register(
-                    CommandManager.literal(a)
+                    Commands.literal(a)
                             .then(
-                                    CommandManager.literal("reload")
+                                    Commands.literal("reload")
                                             .executes(c -> {
 
                                                 if (c.getSource().getEntity() instanceof ServerPlayerEntity) {
@@ -26,7 +26,7 @@ public class ReloadCommand {
                                                     ServerPlayerEntity player = (ServerPlayerEntity) c.getSource().getEntity();
                                                     if (!PermissionHandler.hasPermission(player, "evtracker.command.admin")) {
 
-                                                        player.sendMessage(FancyTextHandler.getFormattedText("&cYou don't have permission to use this command!"));
+                                                        player.sendMessage(FancyText.getFormattedText("&cYou don't have permission to use this command!"), player.getUUID());
                                                         return 0;
 
                                                     }
@@ -35,7 +35,7 @@ public class ReloadCommand {
 
                                                 EVTracker.configManager.load();
                                                 ConfigGetters.load();
-                                                c.getSource().sendMessage(FancyTextHandler.getFormattedText("&aSuccessfully reloaded EVTracker configuration!"));
+                                                c.getSource().sendSuccess(FancyText.getFormattedText("&aSuccessfully reloaded EVTracker configuration!"), true);
                                                 return 0;
 
                                             })
