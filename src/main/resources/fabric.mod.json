@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "evtracker",
+  "version": "${version}",
+  "name": "EVTracker",
+  "description": "",
+  "authors": [],
+  "contact": {},
+  "license": "All-Rights-Reserved",
+  "icon": "assets/evtracker/icon.png",
+  "environment": "server",
+  "entrypoints": {
+    "main": [
+      "com.lypaka.evtracker.EVTracker"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}
